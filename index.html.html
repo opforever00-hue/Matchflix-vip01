@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" class=""><head><script>window.livecodes = window.livecodes || {};</script><title>Untitled Project</title><meta name="title" content="Untitled Project"><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><style id="__livecodes_styles__"></style><script src="https://cdn.jsdelivr.net/npm/es-module-shims@1.10.0/dist/es-module-shims.js" async=""></script><script type="importmap">{
+  "imports": {}
+}</script></head><body>k
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0a0e">
+<title>Acesso VIP Matchflix</title>
+<style>
+:root{--bg:#0b0a0e;--card:#15131a;--line:rgba(255,255,255,.09);--txt:#f4f1f5;--sub:#a29ca8;--rose:#e0527a;--wine:#8f1d45;--gold:#e9c28f;--ok:#4ade80}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--txt);font-family:Inter,'Segoe UI',system-ui,sans-serif;background:var(--bg);background-image:radial-gradient(60% 40% at 15% 0,rgba(143,29,69,.35),transparent),radial-gradient(50% 35% at 100% 30%,rgba(224,82,122,.12),transparent);padding-bottom:40px}
+.wrap{max-width:500px;margin:0 auto}
+.urgency{position:sticky;top:0;z-index:100;background:linear-gradient(90deg,var(--wine),var(--rose));color:#fff;text-align:center;font-size:.85rem;font-weight:800;padding:12px;letter-spacing:.5px;box-shadow:0 4px 20px -4px rgba(224,82,122,.6)}
+.urgency b{background:rgba(0,0,0,.35);padding:3px 8px;border-radius:6px;margin-left:4px;font-variant-numeric:tabular-nums}
+.head{text-align:center;padding:30px 20px 10px}
+.head h1{font-size:2.2rem;font-weight:900;margin:0;line-height:1.1;letter-spacing:-.5px;text-transform:uppercase}
+.head h1 span{background:linear-gradient(90deg,var(--gold),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+.head p{color:var(--sub);font-size:.8rem;font-weight:700;margin-top:10px;letter-spacing:1px;text-transform:uppercase}
+.hero-vid{padding:0 20px;margin-bottom:30px}
+.hero-vid .vid-box{width:100%;aspect-ratio:16/9;background:#050505;border-radius:12px;border:1px solid var(--line);overflow:hidden}
+.hero-vid video{width:100%;height:100%;object-fit:cover}
+.sec-title{display:flex;align-items:center;justify-content:center;gap:8px;font-size:1.1rem;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:15px;padding:0 20px;text-align:center}
+.sec-title span{background:linear-gradient(90deg,var(--gold),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+.plans{padding:0 20px;display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
+.plan{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:.2s}
+.plan.active{border-color:var(--rose);background:linear-gradient(160deg,rgba(143,29,69,.35),rgba(0,0,0,.25));box-shadow:0 10px 30px -10px rgba(224,82,122,.4)}
+.plan .radio{width:20px;height:20px;border-radius:50%;border:2px solid #555;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.plan.active .radio{border-color:var(--rose)}
+.plan.active .radio::after{content:'';width:10px;height:10px;background:var(--rose);border-radius:50%}
+.plan .info{flex:1}
+.plan .info b{display:block;font-size:1.1rem;margin-bottom:2px}
+.plan .info small{display:block;color:var(--sub);font-size:.8rem}
+.plan.active .info small{color:var(--gold);font-weight:700;font-style:italic}
+.plan .price{font-size:1.3rem;font-weight:900;white-space:nowrap;color:var(--gold)}
+.plan .tag{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,var(--gold),#f6d9b4);color:#2a1a08;font-size:.65rem;font-weight:900;padding:3px 10px;border-radius:99px;text-transform:uppercase;letter-spacing:.5px}
+.cta-container{padding:0 20px 30px}
+.btn{width:100%;border:0;cursor:pointer;border-radius:10px;padding:18px;font-weight:900;font-size:1.1rem;color:#fff;background:linear-gradient(100deg,var(--wine),var(--rose));text-transform:uppercase;transition:.2s;display:block;text-align:center;text-decoration:none;box-shadow:0 10px 28px -8px rgba(224,82,122,.7)}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:scale(.98)}
+.carousel-wrap{padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:30px}
+.carousel{display:flex;gap:15px;overflow-x:auto;padding:0 20px 15px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.carousel::-webkit-scrollbar{display:none}
+.mc{position:relative;flex:0 0 85%;max-width:320px;aspect-ratio:3/4;border-radius:16px;overflow:hidden;border:2px solid var(--rose);box-shadow:0 0 20px rgba(224,82,122,.4);scroll-snap-align:center;background:#111}
+.mc video{width:100%;height:100%;object-fit:cover}
+.mc .nm{position:absolute;bottom:0;left:0;width:100%;padding:30px 15px 15px;background:linear-gradient(transparent,rgba(0,0,0,.9));text-align:center}
+.mc .nm b{display:block;font-size:1.4rem;font-weight:900;color:var(--gold)}
+.previa{padding:0 20px;margin-bottom:30px}
+.previa .vid-box{width:100%;aspect-ratio:9/16;background:#050505;border-radius:12px;border:1px solid var(--line);overflow:hidden;position:relative}
+.previa video{width:100%;height:100%;object-fit:cover}
+.previa-label{position:absolute;bottom:15px;left:15px;background:rgba(0,0,0,0.7);padding:5px 10px;border-radius:5px;font-weight:bold;font-size:0.8rem;color:var(--gold);z-index:10}
+.testi-wrap{padding:20px;border-top:1px solid var(--line);background:rgba(0,0,0,.2)}
+.tc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.tc p{margin:0 0 12px;font-size:.95rem;font-style:italic;font-weight:600}
+.tc .who{display:flex;align-items:center;gap:10px;font-size:.8rem;color:var(--sub)}
+.av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--wine),var(--rose));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff}
+.vf{color:var(--ok);font-weight:700}
+.faq-wrap{padding:20px}
+.faq details{border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:var(--card)}
+.faq summary{padding:16px;font-weight:700;font-size:.95rem;cursor:pointer;list-style:none;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:1.2rem}
+.faq details[open] summary::after{content:'−'}
+.faq p{margin:0;padding:0 16px 16px;color:var(--sub);font-size:.85rem;line-height:1.5}
+.foot{text-align:center;color:#6f6a75;font-size:.75rem;padding:30px 20px}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,4,8,.9);backdrop-filter:blur(6px);z-index:200;padding:20px}
+.modal.on{display:flex}
+.box{width:100%;max-width:380px;background:#15131a;border:1px solid var(--line);border-radius:16px;padding:24px;text-align:center;position:relative}
+.x{position:absolute;top:10px;right:15px;background:none;border:0;color:var(--sub);font-size:1.5rem;cursor:pointer}
+.qr{width:160px;height:160px;background:#fff;margin:15px auto;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:.8rem}
+.code{background:rgba(255,255,255,.05);padding:10px;border-radius:8px;font-family:monospace;font-size:.7rem;word-break:break-all;color:var(--sub);margin-bottom:15px}
+.spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--rose);border-radius:50%;margin:20px auto;animation:r 1s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}
+.hide{display:none!important}
+</style>
+
+
+
+<div class="urgency">⚠️ OPORTUNIDADE ÚNICA EXPIRA EM: <b id="timerTop">15:00</b></div>
+
+<div class="wrap" id="salesPage">
+  <div class="head">
+    <h1>ACESSO <span>VIP MATCHFLIX</span></h1>
+    <p>Mais de 500 vídeos e conteúdos exclusivos</p>
+  </div>
+
+  <div class="hero-vid">
+    <div class="vid-box">
+      <video src="" autoplay="" loop="" muted="" playsinline="" id="heroVideo"></video>
+    </div>
+  </div>
+
+  <div class="sec-title">🔥 Escolha seu plano</div>
+  <div class="plans" id="plansContainer"></div>
+
+  <div class="cta-container">
+    <button class="btn" onclick="buySelected()">QUERO TER ACESSO AGORA</button>
+  </div>
+
+  <div class="carousel-wrap">
+    <div class="sec-title">Nossas <span>Modelos</span></div>
+    <div style="text-align:center;color:var(--sub);font-size:.8rem;margin-bottom:15px;padding:0 20px;text-transform:uppercase;letter-spacing:.5px">ARRASTE PARA O LADO E CONHEÇA AS FAMOSAS MAIS GOSTOSAS DO BRASIL</div>
+    <div class="carousel" id="carousel"></div>
+  </div>
+
+  <div class="sec-title">Prévia <span>Sem Censura</span></div>
+  <div class="previa">
+    <div class="vid-box">
+      <video src="" autoplay="" loop="" muted="" playsinline="" id="previaVideo"></video>
+      <div id="previaLabel" class="previa-label"></div>
+    </div>
+  </div>
+
+  <div class="testi-wrap">
+    <div class="sec-title" style="margin-bottom:20px">⭐ Depoimentos de Membros</div>
+    <div class="tc">
+      <p>"O melhor investimento que já fiz"<br><span style="font-style:normal;font-size:.85rem;color:var(--sub);font-weight:400">Os vídeos são em alta definição e o grupo é atualizado todos os dias. O suporte é excelente.</span></p>
+      <div class="who"><div class="av">RC</div><span>Ricardo C. <span class="vf">✓ Compra Verificada</span></span></div>
+    </div>
+    <div class="tc">
+      <p>"Acesso instantâneo mesmo"<br><span style="font-style:normal;font-size:.85rem;color:var(--sub);font-weight:400">Paguei no Pix e o link já apareceu na tela. O pack é absurdo, recomendo o vitalício.</span></p>
+      <div class="who"><div class="av">AM</div><span>André M. <span class="vf">✓ Compra Verificada</span></span></div>
+    </div>
+  </div>
+
+  <div class="faq-wrap">
+    <div class="sec-title" style="margin-bottom:20px">Perguntas Frequentes</div>
+    <div class="faq">
+      <details><summary>Como recebo o acesso?</summary><p>Imediatamente após a confirmação do pagamento, você receberá os links de acesso ao grupo VIP e para download dos vídeos diretamente no seu e-mail e na tela de confirmação.</p></details>
+      <details><summary>O pagamento é seguro e discreto?</summary><p>Sim. Utilizamos criptografia de ponta a ponta. Na fatura ou comprovante aparecerá apenas um nome genérico de tecnologia, garantindo total discrição.</p></details>
+      <details><summary>Os vídeos são atualizados?</summary><p>Sim! Nosso catálogo já conta com mais de 500 vídeos exclusivos e o grupo VIP recebe novas atualizações todas as semanas.</p></details>
+    </div>
+  </div>
+
+  <div class="foot">Conteúdo destinado exclusivamente a maiores de 18 anos.<br>© Acesso VIP Matchflix. Todos os direitos reservados.</div>
+</div>
+
+<!-- ÁREA DE MEMBROS (NÍVEIS) -->
+<div class="wrap hide" id="membersPage" style="padding-top:20px;"></div>
+
+<!-- MODAL PIX -->
+<div class="modal" id="m"><div class="box"><button class="x" onclick="closeM()">✕</button>
+<div id="sLoad"><div class="spin"></div><h3>Gerando Pix…</h3></div>
+<div id="sPix" class="hide"><h3 id="pname">Pagamento Pix</h3>
+<div class="qr"><span>QR Code<br>(demo)</span></div>
+<div style="color:var(--sub);font-size:.8rem;margin-bottom:10px">Aguardando pagamento...</div>
+<div class="code" id="pixcode"></div>
+<h3 id="pixTotal" style="color:var(--gold);margin:0 0 15px">R$ 0,00</h3>
+<button class="btn" onclick="paid()">✅ Simular pagamento</button></div>
+<div id="sOk" class="hide"><div style="font-size:3rem;color:var(--ok)">✓</div><h3>Pagamento aprovado</h3><p style="color:var(--sub)">Liberando o teu acesso…</p></div>
+</div></div>
+
+<script>
+var U='https://pub-377fec82aa984e81b10493818893a797.r2.dev/';
+var P1_CAPA=U+'Sei%20l%C3%A1%204/Persona%201/%E2%9A%A1%EF%B8%8F%40LE4KSXHUB%20ON%20TELEGRAM%F0%9F%92%A6%20-%20(1).mp4';
+var P1=[
+U+'Sei%20l%C3%A1%204/Persona%201/%E2%9A%A1%EF%B8%8F%40LE4KSXHUB%20ON%20TELEGRAM%F0%9F%92%A6%20-%20(11).mp4',
+U+'Sei%20l%C3%A1%204/Persona%201/%E2%9A%A1%EF%B8%8F%40LE4KSXHUB%20ON%20TELEGRAM%F0%9F%92%A6%20-%20(15).mp4',
+U+'Sei%20l%C3%A1%204/Persona%201/%E2%9A%A1%EF%B8%8F%40LE4KSXHUB%20ON%20TELEGRAM%F0%9F%92%A6%20-%20(18).mp4',
+U+'Sei%20l%C3%A1%204/Persona%201/%E2%9A%A1%EF%B8%8F%40LE4KSXHUB%20ON%20TELEGRAM%F0%9F%92%A6%20-%20(2).mp4',
+U+'Sei%20l%C3%A1%204/Persona%201/%E2%9A%A1%EF%B8%8F%40LE4KSXHUB%20ON%20TELEGRAM%F0%9F%92%A6%20-%20(3).mp4',
+U+'Sei%20l%C3%A1%204/Persona%201/%E2%9A%A1%EF%B8%8F%40LE4KSXHUB%20ON%20TELEGRAM%F0%9F%92%A6%20-%20(4).mp4',
+U+'Sei%20l%C3%A1%204/Persona%201/%E2%9A%A1%EF%B8%8F%40LE4KSXHUB%20ON%20TELEGRAM%F0%9F%92%A6%20-%20(8).mp4'
+];
+var P2_CAPA=U+'Sei%20l%C3%A1%204/Persona%202/RisqueCore-Vid-32.mp4';
+var P2=[
+U+'Sei%20l%C3%A1%204/Persona%202/VideoSnap_RisqueCore%20Vid%20102.mp4',
+U+'Sei%20l%C3%A1%204/Persona%202/VideoSnap_RisqueCore%20Vid%2032.mp4',
+U+'Sei%20l%C3%A1%204/Persona%202/VideoSnap_RisqueCore%20Vid%2034.mp4'
+];
+var P5=[
+U+'Sei%20l%C3%A1%204/Persona%205/VideoSnap_VideoSnap_1_5003664464940107199.mp4',
+U+'Sei%20l%C3%A1%204/Persona%205/VideoSnap_VideoSnap_1_5042113862577423757.mp4',
+U+'Sei%20l%C3%A1%204/Persona%205/VideoSnap_VideoSnap_1_5042113862577423759.mp4'
+];
+
+var MODELOS={
+'Luiza':{capa:P1_CAPA,videos:P1.slice()},
+'Gabi':{capa:P2_CAPA,videos:P2.concat([P1[0],P1[1]])},
+'Bianca':{capa:P5[0],videos:P5.concat([P1[2],P1[3],P2[0]])}
+};
+
+var PACKS={
+'basico':{nome:'Teste 3 Dias',preco:790,desc:'Acesso total por 72h'},
+'vip':{nome:'Acesso 30 Dias',preco:1390,desc:'Melhor custo-benefício',tag:'RECOMENDADO'},
+'vitalicio':{nome:'Ocultos + Makabros 💀',preco:2990,desc:'🌈 + Brinde 10 Grupos VIPs'}
+};
+
+function brl(c){return 'R$ '+(c/100).toFixed(2).replace('.',',')}
+function $(id){return document.getElementById(id)}
+function showEl(id,on){var e=$(id);if(e)e.classList.toggle('hide',!on)}
+function forcePlay(){setTimeout(function(){document.querySelectorAll('video').forEach(function(v){v.muted=true;var p=v.play();if(p&&p.catch)p.catch(function(){})})},300)}
+
+var selectedPack = 'vip';
+function renderPlans(){
+  var h='';
+  Object.keys(PACKS).forEach(function(k){
+    var p = PACKS[k];
+    var active = (k === selectedPack) ? 'active' : '';
+    h += '<div class="plan '+active+'" onclick="selectPlan(\''+k+'\')">'
+      + (p.tag ? '<span class="tag">'+p.tag+'</span>' : '')
+      + '<div class="radio"></div>'
+      + '<div class="info"><b>'+p.nome+'</b><small>'+p.desc+'</small></div>'
+      + '<div class="price">'+brl(p.preco)+'</div>'
+      + '</div>';
+  });
+  $('plansContainer').innerHTML = h;
+}
+function selectPlan(k){
+  selectedPack = k;
+  renderPlans();
+  if(k === 'vip') $('heroVideo').src = P1[0];
+  if(k === 'vitalicio') $('heroVideo').src = P2[0];
+  if(k === 'basico') $('heroVideo').src = P5[0];
+}
+
+function renderCarousel(){
+  var h='';
+  Object.keys(MODELOS).forEach(function(n){
+    var m = MODELOS[n];
+    h += '<div class="mc"><video src="'+m.capa+'" autoplay loop muted playsinline preload="auto"></video><div class="nm"><b>'+n+'</b></div></div>';
+  });
+  $('carousel').innerHTML = h;
+}
+
+var previaIndex = 0;
+var previaList = [
+  {url: MODELOS['Luiza'].videos[0], nome: 'Luiza'},
+  {url: MODELOS['Gabi'].videos[0], nome: 'Gabi'},
+  {url: MODELOS['Bianca'].videos[0], nome: 'Bianca'},
+  {url: MODELOS['Luiza'].videos[1], nome: 'Luiza'},
+  {url: MODELOS['Gabi'].videos[1], nome: 'Gabi'},
+  {url: MODELOS['Bianca'].videos[1], nome: 'Bianca'}
+];
+function renderTeasers(){
+  playNextPrevia();
+  setInterval(function(){
+    previaIndex++;
+    if(previaIndex >= previaList.length) previaIndex = 0;
+    playNextPrevia();
+  }, 8000);
+}
+function playNextPrevia(){
+  var video = $('previaVideo');
+  var label = $('previaLabel');
+  if(!video) return;
+  var item = previaList[previaIndex];
+  video.src = item.url;
+  if(label) label.textContent = '🔥 ' + item.nome;
+  video.load();
+  video.play().catch(function(){});
+}
+
+var timerTop=900;
+function startTimerTop(){
+  setInterval(function(){
+    if(timerTop<=0)timerTop=900;
+    timerTop--;
+    var m=Math.floor(timerTop/60), s=timerTop%60;
+    var el=$('timerTop');
+    if(el) el.textContent=('0'+m).slice(-2)+':'+('0'+s).slice(-2);
+  },1000);
+}
+
+var cur=null,tick=null;
+function buySelected(){
+  var p = PACKS[selectedPack];
+  cur={key:selectedPack,nome:p.nome,preco:p.preco};
+  $('pname').textContent=cur.nome+' · '+brl(cur.preco);
+  $('pixTotal').textContent=brl(cur.preco);
+  $('pixcode').textContent='00020126...pix-demo-'+selectedPack;
+  $('m').classList.add('on');
+  showModalStep('sLoad');
+  setTimeout(function(){showModalStep('sPix');startClock()},900);
+}
+function showModalStep(id){['sLoad','sPix','sOk'].forEach(function(s){showEl(s,s===id)})}
+function startClock(){
+  var s=600;clearInterval(tick);
+  var c=$('clock');if(c)c.textContent='10:00';
+  tick=setInterval(function(){
+    s--;if(s<0){clearInterval(tick);return}
+    var c2=$('clock');if(c2)c2.textContent=Math.floor(s/60)+':'+('0'+s%60).slice(-2)
+  },1000)
+}
+function closeM(){$('m').classList.remove('on');clearInterval(tick)}
+
+function paid(){
+  clearInterval(tick);
+  showModalStep('sOk');
+  setTimeout(function(){
+    closeM();
+    $('salesPage').classList.add('hide');
+    $('membersPage').classList.remove('hide');
+    openMembers(cur ? cur.key : 'vip');
+    window.scrollTo(0,0);
+  }, 1500);
+}
+
+function openMembers(packKey){
+  var root = $('membersPage');
+  var pack = PACKS[packKey];
+  
+  var h = '<div class="head" style="padding-bottom: 10px;">'
+    + '<h1 style="font-size: 1.8rem;">SEU <span>ACESSO VIP</span></h1>'
+    + '<p style="color: var(--ok); font-weight: bold; margin-top: 5px;">✅ ' + pack.nome + ' liberado!</p>'
+    + '</div>';
+
+  if(packKey === 'vitalicio'){
+    h += '<div class="cta-container" style="padding-top: 0; padding-bottom: 20px;">'
+      + '<a class="btn" style="background: var(--ok); color: #000; text-decoration: none;" target="_blank" href="https://wa.me/5548998498297?text=Oi%20Luiza!%20Paguei%20o%20Vitalicio">ENTRAR NO GRUPO VIP (WHATSAPP)</a>'
+      + '</div>';
+  }
+
+  h += '<div style="padding: 0 20px;">';
+  ['Luiza','Gabi','Bianca'].forEach(function(n){
+    var videosModelo = MODELOS[n].videos;
+    var exibir = (packKey === 'basico') ? [videosModelo[0]] : videosModelo;
+    
+    h += '<h2 class="sec-title" style="margin-top: 20px; justify-content: flex-start; font-size: 1.1rem; color: var(--gold);">' + n + '</h2>';
+    
+    exibir.forEach(function(vUrl, i){
+      h += '<div style="margin-bottom: 15px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line);">'
+        + '<video src="' + vUrl + '" controls playsinline preload="metadata" style="width: 100%; display: block;"></video>'
+        + '</div>';
+      
+      if(i === exibir.length - 1){
+        var outra = n === 'Luiza' ? 'Gabi' : (n === 'Gabi' ? 'Bianca' : 'Luiza');
+        h += '<div style="background: var(--card); border: 1px solid var(--rose); border-radius: 12px; padding: 15px; margin-bottom: 25px; text-align: center;">'
+          + '<b style="display: block; color: var(--gold); margin-bottom: 5px;">Gostou da ' + n + '?</b>'
+          + '<small style="display: block; color: var(--sub); margin-bottom: 10px;">Libere também os vídeos da ' + outra + ' por apenas R$ 7,90.</small>'
+          + '<button class="btn" style="padding: 12px; font-size: 0.9rem;" onclick="selectPlan(\'basico\'); buySelected();">Quero ver a ' + outra + '</button>'
+          + '</div>';
+      }
+    });
+  });
+  h += '</div>';
+
+  root.innerHTML = h;
+  forcePlay();
+}
+
+renderPlans();
+renderCarousel();
+renderTeasers();
+startTimerTop();
+forcePlay();
+selectPlan('vip');
+</script>
+
+<script></script></body></html>
