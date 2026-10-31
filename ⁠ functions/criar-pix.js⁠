@@ -1,81 +1,23 @@
-// Pages Function: /criar-pix
-// Rota: POST /criar-pix
-// Esta função roda no SERVIDOR (Cloudflare), não no navegador.
-// Aqui o PUSHINPAY_TOKEN está seguro e o CORS não é um problema.
-
 export async function onRequestPost(context) {
   const { request, env } = context;
 
-  // CORS headers para permitir que o frontend chame esta função
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Content-Type": "application/json",
-  };
-
-  // Responder preflight CORS
-  if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: corsHeaders });
-  }
-
   try {
-    // Ler o corpo da requisição enviada pelo frontend
     const body = await request.json();
-    const value = body.value; // valor em centavos (ex: 1000 = R$ 10,00)
-    const webhookUrl = body.webhook_url || null;
 
-    if (!value || value <= 0) {
-      return new Response(
-        JSON.stringify({ error: "Valor inválido. Envie 'value' em centavos." }),
-        { status: 400, headers: corsHeaders }
-      );
+    console.log("Webhook recebido da PushinPay:", JSON.stringify(body));
+
+    if (body.status === "paid") {
+      console.log(`Pagamento confirmado! ID: ${body.id}, Valor: ${body.value}`);
     }
 
-    // Verificar se o token está configurado
-    if (!env.PUSHINPAY_TOKEN) {
-      return new Response(
-        JSON.stringify({ error: "PUSHINPAY_TOKEN não configurado nas variáveis de ambiente do Pages." }),
-        { status: 500, headers: corsHeaders }
-      );
-    }
-
-    // Montar o payload para a API da PushinPay
-    const payload = {
-      value: value,
-    };
-    if (webhookUrl) {
-      payload.webhook_url = webhookUrl;
-    }
-
-    // Chamar a API da PushinPay a partir do SERVIDOR
-    const pushinResponse = await fetch("https://api.pushinpay.com.br/api/v1/pix/cashier/create", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${env.PUSHINPAY_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
+    return new Response(JSON.stringify({ received: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
     });
-
-    const data = await pushinResponse.json();
-
-    if (!pushinResponse.ok) {
-      return new Response(
-        JSON.stringify({ error: "Erro na API da PushinPay", details: data }),
-        { status: pushinResponse.status, headers: corsHeaders }
-      );
-    }
-
-    // Retornar o resultado para o frontend
-    return new Response(
-      JSON.stringify(data),
-      { status: 200, headers: corsHeaders }
-    );
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: "Erro interno", message: err.message }),
-      { status: 500, headers: corsHeaders }
-    );
+    console.error("Erro no webhook:", err);
+    return new Response(JSON.stringify({ error: "Erro interno" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
-}
