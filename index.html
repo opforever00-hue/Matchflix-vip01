@@ -67,7 +67,9 @@
         .box{width:100%;max-width:380px;background:#15131a;border:1px solid var(--line);border-radius:16px;padding:24px;text-align:center;position:relative}
         .x{position:absolute;top:10px;right:15px;background:none;border:0;color:var(--sub);font-size:1.5rem;cursor:pointer}
         .qr{width:160px;height:160px;background:#fff;margin:15px auto;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:.8rem}
-        .code{background:rgba(255,255,255,.05);padding:10px;border-radius:8px;font-family:monospace;font-size:.7rem;word-break:break-all;color:var(--sub);margin-bottom:15px}
+        .qr img{width:100%;height:100%;object-fit:contain;border-radius:8px}
+        .code{background:rgba(255,255,255,.05);padding:10px;border-radius:8px;font-family:monospace;font-size:.7rem;word-break:break-all;color:var(--sub);margin-bottom:10px}
+        .btn-copy{width:100%;border:0;cursor:pointer;border-radius:8px;padding:12px;font-weight:700;font-size:.9rem;color:#fff;background:#007bff;margin-bottom:15px}
         .spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--rose);border-radius:50%;margin:20px auto;animation:r 1s linear infinite}
         @keyframes r{to{transform:rotate(360deg)}}
         .hide{display:none!important}
@@ -134,7 +136,7 @@
   <div class="foot">Conteúdo destinado exclusivamente a maiores de 18 anos.<br>© Acesso VIP Matchflix. Todos os direitos reservados.</div>
 </div>
 
-<!-- ÁREA DE MEMBROS (NÍVEIS) -->
+<!-- ÁREA DE MEMBROS -->
 <div class="wrap hide" id="membersPage" style="padding-top:20px;"></div>
 
 <!-- MODAL PIX -->
@@ -142,10 +144,11 @@
 <div id="sLoad"><div class="spin"></div><h3>Gerando Pix…</h3></div>
 <div id="sPix" class="hide"><h3 id="pname">Pagamento Pix</h3>
 <div class="qr"><span>QR Code Indisponível</span></div>
-<div style="color:var(--sub);font-size:.8rem;margin-bottom:10px">Aguardando pagamento...</div>
+<div style="color:var(--sub);font-size:.8rem;margin-bottom:10px">Escaneie o QR Code ou copie o código abaixo. A liberação é automática após o pagamento.</div>
 <div class="code" id="pixcode"></div>
+<button class="btn-copy" onclick="copiarPix()">📋 Copiar Código Pix</button>
 <h3 id="pixTotal" style="color:var(--gold);margin:0 0 15px">R$ 0,00</h3>
-<button class="btn" onclick="paid()">✅ Simular pagamento</button></div>
+</div>
 <div id="sOk" class="hide"><div style="font-size:3rem;color:var(--ok)">✓</div><h3>Pagamento aprovado</h3><p style="color:var(--sub)">Liberando o teu acesso…</p></div>
 </div></div>
 
@@ -261,7 +264,7 @@ function startTimerTop(){
   },1000);
 }
 
-var cur=null,tick=null;
+var cur=null,tick=null,pollTimer=null,transacaoId=null;
 
 async function buySelected(){
   var p = PACKS[selectedPack];
@@ -271,21 +274,28 @@ async function buySelected(){
   showModalStep('sLoad');
 
   try {
-    const response = await fetch('/criar-pix', {
+    const response = await fetch('/api/pix/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ valor: p.preco })
+      body: JSON.stringify({ amount: p.preco / 100 })
     });
 
     const data = await response.json();
 
-    if (data.qr_code_base64 || data.qr_code) {
+    if (!response.ok) {
+      alert('Erro ao gerar o Pix: ' + (data.error || 'Tente novamente.'));
+      closeM();
+      return;
+    }
+
+    if (data.id && (data.qr_code_base64 || data.qr_code)) {
+      transacaoId = data.id;
       $('pname').textContent = cur.nome + ' · ' + brl(cur.preco);
       $('pixTotal').textContent = brl(cur.preco);
       
       const qrContainer = document.querySelector('.qr');
       if (data.qr_code_base64) {
-        qrContainer.innerHTML = '<img src="data:image/png;base64,' + data.qr_code_base64 + '" alt="QR Code Pix" style="width:100%;height:100%;object-fit:contain;border-radius:8px;">';
+        qrContainer.innerHTML = '<img src="' + data.qr_code_base64 + '" alt="QR Code Pix">';
       } else {
         qrContainer.innerHTML = '<span>QR Code Indisponível</span>';
       }
@@ -293,7 +303,7 @@ async function buySelected(){
       $('pixcode').textContent = data.qr_code || 'Código Pix indisponível';
 
       showModalStep('sPix');
-      startClock();
+      startPolling();
     } else {
       alert('Erro ao gerar o Pix. Tente novamente.');
       closeM();
@@ -305,19 +315,48 @@ async function buySelected(){
   }
 }
 
-function showModalStep(id){['sLoad','sPix','sOk'].forEach(function(s){showEl(s,s===id)})}
-
-function startClock(){
-  var s=600;clearInterval(tick);
-  tick=setInterval(function(){
-    s--;if(s<0){clearInterval(tick);return}
-  },1000)
+function startPolling(){
+  if(pollTimer) clearInterval(pollTimer);
+  var tentativas = 0;
+  var maxTentativas = 180;
+  pollTimer = setInterval(async function(){
+    tentativas++;
+    if(tentativas > maxTentativas){
+      clearInterval(pollTimer);
+      return;
+    }
+    try {
+      const resp = await fetch('/api/pix/status/' + transacaoId);
+      const data = await resp.json();
+      if(data.status === 'paid'){
+        clearInterval(pollTimer);
+        paid();
+      }
+    } catch(e){}
+  }, 5000);
 }
 
-function closeM(){$('m').classList.remove('on');clearInterval(tick)}
+function copiarPix(){
+  var code = $('pixcode').textContent;
+  if(code && code !== 'Código Pix indisponível'){
+    navigator.clipboard.writeText(code).then(function(){
+      var btn = document.querySelector('.btn-copy');
+      var txt = btn.textContent;
+      btn.textContent = '✅ Copiado!';
+      setTimeout(function(){ btn.textContent = txt; }, 2000);
+    });
+  }
+}
+
+function showModalStep(id){['sLoad','sPix','sOk'].forEach(function(s){showEl(s,s===id)})}
+
+function closeM(){
+  $('m').classList.remove('on');
+  if(pollTimer) clearInterval(pollTimer);
+}
 
 function paid(){
-  clearInterval(tick);
+  if(pollTimer) clearInterval(pollTimer);
   showModalStep('sOk');
   setTimeout(function(){
     closeM();
