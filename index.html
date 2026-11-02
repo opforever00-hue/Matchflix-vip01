@@ -73,8 +73,6 @@
         .spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--rose);border-radius:50%;margin:20px auto;animation:r 1s linear infinite}
         @keyframes r{to{transform:rotate(360deg)}}
         .hide{display:none!important}
-
-        /* ===== DOWNSELL ===== */
         .downsell-badge{display:inline-block;background:rgba(74,222,128,.15);color:var(--ok);border:1px solid var(--ok);font-size:.7rem;font-weight:900;padding:3px 10px;border-radius:99px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
         .downsell-price{font-size:2.4rem;font-weight:900;color:var(--gold);margin:10px 0 4px;line-height:1}
         .downsell-price small{font-size:1rem;color:var(--sub);font-weight:700}
@@ -147,10 +145,8 @@
   <div class="foot">Conteúdo destinado exclusivamente a maiores de 18 anos.<br>© Acesso VIP Matchflix. Todos os direitos reservados.</div>
 </div>
 
-<!-- ÁREA DE MEMBROS -->
 <div class="wrap hide" id="membersPage" style="padding-top:20px;"></div>
 
-<!-- MODAL PIX -->
 <div class="modal" id="m"><div class="box"><button class="x" onclick="closeM()">✕</button>
 <div id="sLoad"><div class="spin"></div><h3>Gerando Pix…</h3></div>
 <div id="sPix" class="hide"><h3 id="pname">Pagamento Pix</h3>
@@ -163,12 +159,12 @@
 <div id="sOk" class="hide"><div style="font-size:3rem;color:var(--ok)">✓</div><h3>Pagamento aprovado</h3><p style="color:var(--sub)">Liberando o teu acesso…</p></div>
 </div></div>
 
-<!-- ===== MODAL DOWNSELL ===== -->
 <div class="modal" id="downsellModal">
   <div class="box" id="downsellBox"></div>
-</div>
 
-<script>
+
+
+    <script>
 var U='https://pub-377fec82aa984e81b10493818893a797.r2.dev/';
 var P1_CAPA=U+'Sei%20l%C3%A1%204/Persona%201/%E2%9A%A1%EF%B8%8F%40LE4KSXHUB%20ON%20TELEGRAM%F0%9F%92%A6%20-%20(1).mp4';
 var P1=[
@@ -204,76 +200,70 @@ var PACKS={
 'vitalicio':{nome:'Ocultos + Makabros 💀',preco:2990,desc:'🌈 + Brinde 10 Grupos VIPs'}
 };
 
-/* Pacotes de downsell */
-var DOWNSELL_PACKS = {
-  'down490': { nome:'Acesso Promocional 30 Dias', preco:490, desc:'Oferta exclusiva de saída', level:1 },
-  'down100': { nome:'Acesso Simbólico 3 Dias',   preco:100, desc:'Última chance antes de sair', level:2 }
-};
-
-var WHATSAPP_SURPRESA = 'https://wa.me/5548998498297?text=' + encodeURIComponent('Oi! Vi a oferta final e quero conversar com a modelo surpresa 😈');
+var WHATSAPP_SURPRESA='https://wa.me/5548998498297?text='+encodeURIComponent('Oi! Quero falar com a modelo surpresa 😈');
 
 function brl(c){return 'R$ '+(c/100).toFixed(2).replace('.',',')}
 function $(id){return document.getElementById(id)}
 function showEl(id,on){var e=$(id);if(e)e.classList.toggle('hide',!on)}
 function forcePlay(){setTimeout(function(){document.querySelectorAll('video').forEach(function(v){v.muted=true;var p=v.play();if(p&&p.catch)p.catch(function(){})})},300)}
 
-var selectedPack = 'vip';
+var selectedPack='vip';
 function renderPlans(){
   var h='';
   Object.keys(PACKS).forEach(function(k){
-    var p = PACKS[k];
-    var active = (k === selectedPack) ? 'active' : '';
-    h += '<div class="plan '+active+'" onclick="selectPlan(\''+k+'\')">'
-      + (p.tag ? '<span class="tag">'+p.tag+'</span>' : '')
-      + '<div class="radio"></div>'
-      + '<div class="info"><b>'+p.nome+'</b><small>'+p.desc+'</small></div>'
-      + '<div class="price">'+brl(p.preco)+'</div>'
-      + '</div>';
+    var p=PACKS[k];
+    var active=(k===selectedPack)?'active':'';
+    h+='<div class="plan '+active+'" onclick="selectPlan(\''+k+'\')">'
+      +(p.tag?'<span class="tag">'+p.tag+'</span>':'')
+      +'<div class="radio"></div>'
+      +'<div class="info"><b>'+p.nome+'</b><small>'+p.desc+'</small></div>'
+      +'<div class="price">'+brl(p.preco)+'</div>'
+      +'</div>';
   });
-  $('plansContainer').innerHTML = h;
+  $('plansContainer').innerHTML=h;
 }
 function selectPlan(k){
-  selectedPack = k;
+  selectedPack=k;
   renderPlans();
-  if(k === 'vip') $('heroVideo').src = P1[0];
-  if(k === 'vitalicio') $('heroVideo').src = P2[0];
-  if(k === 'basico') $('heroVideo').src = P5[0];
+  if(k==='vip') $('heroVideo').src=P1[0];
+  if(k==='vitalicio') $('heroVideo').src=P2[0];
+  if(k==='basico') $('heroVideo').src=P5[0];
   resetInactivityTimer();
 }
 
 function renderCarousel(){
   var h='';
   Object.keys(MODELOS).forEach(function(n){
-    var m = MODELOS[n];
-    h += '<div class="mc"><video src="'+m.capa+'" autoplay loop muted playsinline preload="auto"></video><div class="nm"><b>'+n+'</b></div></div>';
+    var m=MODELOS[n];
+    h+='<div class="mc"><video src="'+m.capa+'" autoplay loop muted playsinline preload="auto"></video><div class="nm"><b>'+n+'</b></div></div>';
   });
-  $('carousel').innerHTML = h;
+  $('carousel').innerHTML=h;
 }
 
-var previaIndex = 0;
-var previaList = [
-  {url: MODELOS['Luiza'].videos[0], nome: 'Luiza'},
-  {url: MODELOS['Gabi'].videos[0], nome: 'Gabi'},
-  {url: MODELOS['Bianca'].videos[0], nome: 'Bianca'},
-  {url: MODELOS['Luiza'].videos[1], nome: 'Luiza'},
-  {url: MODELOS['Gabi'].videos[1], nome: 'Gabi'},
-  {url: MODELOS['Bianca'].videos[1], nome: 'Bianca'}
+var previaIndex=0;
+var previaList=[
+  {url:MODELOS['Luiza'].videos[0],nome:'Luiza'},
+  {url:MODELOS['Gabi'].videos[0],nome:'Gabi'},
+  {url:MODELOS['Bianca'].videos[0],nome:'Bianca'},
+  {url:MODELOS['Luiza'].videos[1],nome:'Luiza'},
+  {url:MODELOS['Gabi'].videos[1],nome:'Gabi'},
+  {url:MODELOS['Bianca'].videos[1],nome:'Bianca'}
 ];
 function renderTeasers(){
   playNextPrevia();
   setInterval(function(){
     previaIndex++;
-    if(previaIndex >= previaList.length) previaIndex = 0;
+    if(previaIndex>=previaList.length) previaIndex=0;
     playNextPrevia();
-  }, 8000);
+  },8000);
 }
 function playNextPrevia(){
-  var video = $('previaVideo');
-  var label = $('previaLabel');
+  var video=$('previaVideo');
+  var label=$('previaLabel');
   if(!video) return;
-  var item = previaList[previaIndex];
-  video.src = item.url;
-  if(label) label.textContent = '🔥 ' + item.nome;
+  var item=previaList[previaIndex];
+  video.src=item.url;
+  if(label) label.textContent='🔥 '+item.nome;
   video.load();
   video.play().catch(function(){});
 }
@@ -283,53 +273,51 @@ function startTimerTop(){
   setInterval(function(){
     if(timerTop<=0)timerTop=900;
     timerTop--;
-    var m=Math.floor(timerTop/60), s=timerTop%60;
+    var m=Math.floor(timerTop/60),s=timerTop%60;
     var el=$('timerTop');
     if(el) el.textContent=('0'+m).slice(-2)+':'+('0'+s).slice(-2);
   },1000);
 }
 
-var cur=null,tick=null,pollTimer=null,transacaoId=null;
+var cur=null,pollTimer=null,transacaoId=null;
 
-async function buySelected(){
+function buySelected(){
   resetInactivityTimer();
-  var p = PACKS[selectedPack];
-  cur={key:selectedPack,nome:p.nome,preco:p.preco,downsell:false};
+  var p=PACKS[selectedPack];
+  cur={key:selectedPack,nome:p.nome,preco:p.preco,downsell:false,downsellLevel:0};
   openCheckout();
 }
 
 function openCheckout(){
   $('m').classList.add('on');
   showModalStep('sLoad');
-  fetch('/api/pix/create', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ amount: cur.preco / 100 })
+  fetch('/api/pix/create',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({amount:cur.preco/100})
   }).then(function(response){
-    return response.json().then(function(data){ return {ok:response.ok, data:data}; });
+    return response.json().then(function(data){return {ok:response.ok,data:data};});
   }).then(function(r){
-    if (!r.ok) {
-      alert('Erro ao gerar o Pix: ' + (r.data.error || 'Tente novamente.'));
+    if(!r.ok){
+      alert('Erro ao gerar o Pix: '+(r.data.error||'Tente novamente.'));
       closeM(true);
       return;
     }
-    var data = r.data;
-    if (data.id && (data.qr_code_base64 || data.qr_code)) {
-      transacaoId = data.id;
-      $('pname').textContent = cur.nome + ' · ' + brl(cur.preco);
-      $('pixTotal').textContent = brl(cur.preco);
-
-      var qrContainer = document.querySelector('.qr');
-      if (data.qr_code_base64) {
-        qrContainer.innerHTML = '<img src="' + data.qr_code_base64 + '" alt="QR Code Pix">';
-      } else {
-        qrContainer.innerHTML = '<span>QR Code Indisponível</span>';
+    var data=r.data;
+    if(data.id&&(data.qr_code_base64||data.qr_code)){
+      transacaoId=data.id;
+      $('pname').textContent=cur.nome+' · '+brl(cur.preco);
+      $('pixTotal').textContent=brl(cur.preco);
+      var qrContainer=document.querySelector('.qr');
+      if(data.qr_code_base64){
+        qrContainer.innerHTML='<img src="'+data.qr_code_base64+'" alt="QR Code Pix">';
+      }else{
+        qrContainer.innerHTML='<span>QR Code Indisponível</span>';
       }
-
-      $('pixcode').textContent = data.qr_code || 'Código Pix indisponível';
+      $('pixcode').textContent=data.qr_code||'Código Pix indisponível';
       showModalStep('sPix');
       startPolling();
-    } else {
+    }else{
       alert('Erro ao gerar o Pix. Tente novamente.');
       closeM(true);
     }
@@ -342,47 +330,36 @@ function openCheckout(){
 
 function startPolling(){
   if(pollTimer) clearInterval(pollTimer);
-  var tentativas = 0;
-  var maxTentativas = 180;
-  pollTimer = setInterval(async function(){
+  var tentativas=0,maxTentativas=180;
+  pollTimer=setInterval(function(){
     tentativas++;
-    if(tentativas > maxTentativas){
-      clearInterval(pollTimer);
-      return;
-    }
-    try {
-      const resp = await fetch('/api/pix/status/' + transacaoId);
-      const data = await resp.json();
-      if(data.status === 'paid'){
-        clearInterval(pollTimer);
-        paid();
-      }
-    } catch(e){}
-  }, 5000);
+    if(tentativas>maxTentativas){clearInterval(pollTimer);return;}
+    fetch('/api/pix/status/'+transacaoId).then(function(r){return r.json();}).then(function(data){
+      if(data.status==='paid'){clearInterval(pollTimer);paid();}
+    }).catch(function(){});
+  },5000);
 }
 
 function copiarPix(){
-  var code = $('pixcode').textContent;
-  if(code && code !== 'Código Pix indisponível'){
+  var code=$('pixcode').textContent;
+  if(code&&code!=='Código Pix indisponível'){
     navigator.clipboard.writeText(code).then(function(){
-      var btn = document.querySelector('.btn-copy');
-      var txt = btn.textContent;
-      btn.textContent = '✅ Copiado!';
-      setTimeout(function(){ btn.textContent = txt; }, 2000);
+      var btn=document.querySelector('.btn-copy');
+      var txt=btn.textContent;
+      btn.textContent='✅ Copiado!';
+      setTimeout(function(){btn.textContent=txt;},2000);
     });
   }
 }
 
 function showModalStep(id){['sLoad','sPix','sOk'].forEach(function(s){showEl(s,s===id)})}
 
-/* ====== FECHAMENTO DO MODAL COM DOWNSELL ====== */
 function closeM(skipDownsell){
   $('m').classList.remove('on');
   if(pollTimer) clearInterval(pollTimer);
   if(skipDownsell) return;
-  // Se o usuário fechar o QR Code sem pagar, dispara a oferta de downsell
-  if(cur && transacaoId){
-    transacaoId = null;
+  if(cur&&transacaoId){
+    transacaoId=null;
     triggerDownsell(1);
   }
 }
@@ -394,64 +371,161 @@ function paid(){
     $('m').classList.remove('on');
     $('salesPage').classList.add('hide');
     $('membersPage').classList.remove('hide');
-    var packKey = cur ? (cur.downsell ? (cur.downsellLevel === 1 ? 'vip' : 'basico') : cur.key) : 'vip';
+    var packKey=cur?(cur.downsell?(cur.downsellLevel===1?'vip':'basico'):cur.key):'vip';
     openMembers(packKey);
     window.scrollTo(0,0);
-  }, 1500);
+  },1500);
 }
 
-/* ====== TIMER DE INATIVIDADE ====== */
-var inactivityTimer = null;
-var INACTIVITY_MS = 30000; // 30s
+var inactivityTimer=null;
+var INACTIVITY_MS=30000;
 function resetInactivityTimer(){
   if(inactivityTimer) clearTimeout(inactivityTimer);
-  // Só arma se a página de vendas estiver visível e nenhum modal de downsell aberto
   if($('salesPage').classList.contains('hide')) return;
   if($('downsellModal').classList.contains('on')) return;
-  inactivityTimer = setTimeout(function(){
-    triggerDownsell(1);
-  }, INACTIVITY_MS);
+  inactivityTimer=setTimeout(function(){triggerDownsell(1);},INACTIVITY_MS);
 }
 function stopInactivityTimer(){
   if(inactivityTimer) clearTimeout(inactivityTimer);
-  inactivityTimer = null;
+  inactivityTimer=null;
 }
 ['click','scroll','touchstart','keydown'].forEach(function(ev){
-  document.addEventListener(ev, function(){
-    // não reinicia se o modal de downsell estiver aberto
+  document.addEventListener(ev,function(){
     if($('downsellModal').classList.contains('on')) return;
     resetInactivityTimer();
-  }, {passive:true});
+  },{passive:true});
 });
 
-/* ====== DOWNSELL ====== */
-var downsellStep = 0; // 1 -> 4,90 / 2 -> 1,00 / 3 -> whatsapp
-var downsellOpen = false;
+var downsellOpen=false;
 
 function triggerDownsell(level){
-  // Não dispara se a página de membros já está visível
   if(!$('membersPage').classList.contains('hide')) return;
   if(downsellOpen) return;
-
-  downsellOpen = true;
+  downsellOpen=true;
   stopInactivityTimer();
-  downsellStep = level;
-
-  var box = $('downsellBox');
-
-  if(level === 1){
-    box.innerHTML = renderDownsell490();
-  } else if(level === 2){
-    box.innerHTML = renderDownsell100();
-  } else if(level === 3){
-    box.innerHTML = renderWhatsappSurpresa();
-  }
-
+  var box=$('downsellBox');
+  if(level===1) box.innerHTML=renderDownsell490();
+  else if(level===2) box.innerHTML=renderDownsell100();
+  else box.innerHTML=renderWhatsappSurpresa();
   $('downsellModal').classList.add('on');
 }
 
 function renderDownsell490(){
   return ''
-    + '<button class="x" onclick="declineDownsell()">✕</button>'
-    + '<div class="downsell-badge">⚡ Oferta de saída</div>'
-    + '<h3 style="margin:0 0 6px;font-size:1.2rem">Espera!
+    +'<button class="x" onclick="declineDownsell()">✕</button>'
+    +'<div class="downsell-badge">⚡ Oferta de saída</div>'
+    +'<h3 style="margin:0 0 6px;font-size:1.2rem">Espera! Liberamos um acesso promocional</h3>'
+    +'<p style="color:var(--sub);font-size:.85rem;margin:8px 0 0">Só nesta tela, por tempo limitado:</p>'
+    +'<div class="downsell-price">R$ 4,90 <small>/ 30 dias</small></div>'
+    +'<div class="strike">de R$ 13,90 por</div>'
+    +'<ul class="downsell-list">'
+    +'<li>Acesso total por 30 dias</li>'
+    +'<li>Mais de 500 vídeos exclusivos</li>'
+    +'<li>Atualizações semanais</li>'
+    +'</ul>'
+    +'<button class="btn" onclick="acceptDownsell(1)">SIM, QUERO POR R$ 4,90</button>'
+    +'<button class="btn-decline" onclick="declineDownsell()">Não, obrigado</button>';
+}
+
+function renderDownsell100(){
+  return ''
+    +'<button class="x" onclick="declineDownsell()">✕</button>'
+    +'<div class="downsell-badge">🔥 Última chance</div>'
+    +'<h3 style="margin:0 0 6px;font-size:1.2rem">Tudo bem… que tal R$ 1,00?</h3>'
+    +'<p style="color:var(--sub);font-size:.85rem;margin:8px 0 0">Um acesso simbólico para você conhecer:</p>'
+    +'<div class="downsell-price">R$ 1,00 <small>/ 3 dias</small></div>'
+    +'<div class="strike">de R$ 7,90 por</div>'
+    +'<ul class="downsell-list">'
+    +'<li>Acesso por 3 dias</li>'
+    +'<li>Vídeos selecionados das modelos</li>'
+    +'<li>Sem renovação automática</li>'
+    +'</ul>'
+    +'<button class="btn" onclick="acceptDownsell(2)">SIM, QUERO POR R$ 1,00</button>'
+    +'<button class="btn-decline" onclick="declineDownsell()">Não, obrigado</button>';
+}
+
+function renderWhatsappSurpresa(){
+  return ''
+    +'<button class="x" onclick="closeDownsell()">✕</button>'
+    +'<div class="downsell-badge">💬 Atendimento humano</div>'
+    +'<h3 style="margin:0 0 6px;font-size:1.2rem">Fale com a modelo surpresa</h3>'
+    +'<p style="color:var(--sub);font-size:.85rem;margin:8px 0 16px">Tudo bem, não vamos insistir. Mas antes de você ir, liberamos um contato direto com a modelo surpresa. É só clicar abaixo e chamar no WhatsApp.</p>'
+    +'<a class="btn" href="'+WHATSAPP_SURPRESA+'" target="_blank" rel="noopener">QUERO FALAR COM A MODELO</a>'
+    +'<button class="btn-decline" onclick="closeDownsell()">Fechar</button>';
+}
+
+function acceptDownsell(level){
+  var preco=level===1?490:100;
+  var nome=level===1?'Acesso Promocional 30 Dias':'Acesso Simbólico 3 Dias';
+  cur={key:'vip',nome:nome,preco:preco,downsell:true,downsellLevel:level};
+  closeDownsell(true);
+  openCheckout();
+}
+
+function declineDownsell(){
+  if(downsellStepAtual()===1){triggerDownsell(2);}
+  else if(downsellStepAtual()===2){triggerDownsell(3);}
+  else{closeDownsell();}
+}
+
+function downsellStepAtual(){
+  var html=$('downsellBox').innerHTML;
+  if(html.indexOf('R$ 4,90')!==-1) return 1;
+  if(html.indexOf('R$ 1,00')!==-1) return 2;
+  return 3;
+}
+
+function closeDownsell(skipReset){
+  $('downsellModal').classList.remove('on');
+  downsellOpen=false;
+  if(!skipReset) resetInactivityTimer();
+}
+
+function openMembers(packKey){
+  var root=$('membersPage');
+  var pack=PACKS[packKey]||PACKS['vip'];
+  var h='<div class="head" style="padding-bottom:10px;">'
+    +'<h1 style="font-size:1.8rem;">SEU <span>ACESSO VIP</span></h1>'
+    +'<p style="color:var(--ok);font-weight:bold;margin-top:5px;">✅ '+(cur&&cur.downsell?cur.nome:pack.nome)+' liberado!</p>'
+    +'</div>';
+  if(packKey==='vitalicio'){
+    h+='<div class="cta-container" style="padding-top:0;padding-bottom:20px;">'
+      +'<a class="btn" style="background:var(--ok);color:#000;text-decoration:none;" target="_blank" href="https://wa.me/5548998498297?text=Oi%20Luiza!%20Paguei%20o%20Vitalicio">ENTRAR NO GRUPO VIP (WHATSAPP)</a>'
+      +'</div>';
+  }
+  h+='<div style="padding:0 20px;">';
+  ['Luiza','Gabi','Bianca'].forEach(function(n){
+    var videosModelo=MODELOS[n].videos;
+    var exibir=(packKey==='basico')?[videosModelo[0]]:videosModelo;
+    h+='<h2 class="sec-title" style="margin-top:20px;justify-content:flex-start;font-size:1.1rem;color:var(--gold);">'+n+'</h2>';
+    exibir.forEach(function(vUrl,i){
+      h+='<div style="margin-bottom:15px;border-radius:12px;overflow:hidden;border:1px solid var(--line);">'
+        +'<video src="'+vUrl+'" controls playsinline preload="metadata" style="width:100%;display:block;"></video>'
+        +'</div>';
+      if(i===exibir.length-1){
+        var outra=n==='Luiza'?'Gabi':(n==='Gabi'?'Bianca':'Luiza');
+        h+='<div style="background:var(--card);border:1px solid var(--rose);border-radius:12px;padding:15px;margin-bottom:25px;text-align:center;">'
+          +'<b style="display:block;color:var(--gold);margin-bottom:5px;">Gostou da '+n+'?</b>'
+          +'<small style="display:block;color:var(--sub);margin-bottom:10px;">Libere também os vídeos da '+outra+' por apenas R$ 7,90.</small>'
+          +'<button class="btn" style="padding:12px;font-size:0.9rem;" onclick="selectPlan(\'basico\');buySelected();">Quero ver a '+outra+'</button>'
+          +'</div>';
+      }
+    });
+  });
+  h+='</div>';
+  root.innerHTML=h;
+  forcePlay();
+}
+
+renderPlans();
+renderCarousel();
+renderTeasers();
+startTimerTop();
+forcePlay();
+selectPlan('vip');
+resetInactivityTimer();
+</script>
+
+</body>
+</html>
+</div>
