@@ -95,6 +95,11 @@
         .btn-decline:hover{color:var(--txt);opacity:.9}
         .strike{text-decoration:line-through;color:var(--sub);font-size:1rem;font-weight:700}
         #downsellBox{animation:fadeSlide .4s var(--ease) both}
+        .logout-bar{padding:0 20px 20px;display:flex;justify-content:center}
+        .logout-btn{background:none;border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px 16px;font-size:.8rem;cursor:pointer;transition:border-color .3s var(--ease),color .3s var(--ease)}
+        .logout-btn:hover{border-color:var(--rose);color:var(--txt)}
+        .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#1f1c26;border:1px solid var(--line);color:var(--txt);padding:12px 18px;border-radius:10px;font-size:.85rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s var(--ease),transform .3s var(--ease);z-index:300;max-width:90vw;text-align:center;box-shadow:0 10px 30px -10px rgba(0,0,0,.8)}
+        .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
     </style>
 </head>
 <body>
@@ -168,6 +173,7 @@
 <div class="code" id="pixcode"></div>
 <button class="btn-copy" onclick="copiarPix()">📋 Copiar Código Pix</button>
 <h3 id="pixTotal" style="color:var(--gold);margin:0 0 15px">R$ 0,00</h3>
+<div id="pixFallbackHint" style="color:var(--sub);font-size:.7rem;margin-top:4px" class="hide">Aguardando confirmação do pagamento…</div>
 </div>
 <div id="sOk" class="hide"><div style="font-size:3rem;color:var(--ok)">✓</div><h3>Pagamento aprovado</h3><p style="color:var(--sub)">Liberando o teu acesso…</p></div>
 </div></div>
@@ -175,6 +181,9 @@
 <div class="modal" id="downsellModal">
   <div class="box" id="downsellBox"></div>
 </div>
+
+<div class="toast" id="toast"></div>
+
 
 <script>
 var U='https://pub-377fec82aa984e81b10493818893a797.r2.dev/';
@@ -214,11 +223,44 @@ var PACKS={
 
 var WHATSAPP_SURPRESA='https://wa.me/5548998498297?text='+encodeURIComponent('Oi! Quero falar com a modelo surpresa 😈');
 
+var STORAGE_KEY='matchflix_access_v1';
+
 function brl(c){return 'R$ '+(c/100).toFixed(2).replace('.',',')}
 function $(id){return document.getElementById(id)}
 function showEl(id,on){var e=$(id);if(e)e.classList.toggle('hide',!on)}
 function forcePlay(){setTimeout(function(){document.querySelectorAll('video').forEach(function(v){v.muted=true;var p=v.play();if(p&&p.catch)p.catch(function(){})})},300)}
 
+function toast(msg,ms){
+  var t=$('toast');
+  if(!t) return;
+  t.textContent=msg;
+  t.classList.add('on');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(function(){t.classList.remove('on');}, ms||3200);
+}
+
+/* ====== PERSISTÊNCIA ====== */
+function saveAccess(packKey,nome,days){
+  try{
+    var exp=Date.now()+days*24*60*60*1000;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({pack:packKey,nome:nome,exp:exp}));
+  }catch(e){}
+}
+function readAccess(){
+  try{
+    var raw=localStorage.getItem(STORAGE_KEY);
+    if(!raw) return null;
+    var obj=JSON.parse(raw);
+    if(!obj||!obj.pack||!obj.exp) return null;
+    if(Date.now()>obj.exp){localStorage.removeItem(STORAGE_KEY);return null;}
+    return obj;
+  }catch(e){return null;}
+}
+function clearAccess(){
+  try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
+}
+
+/* ====== PLANOS ====== */
 var selectedPack='vip';
 function renderPlans(){
   var h='';
@@ -308,6 +350,7 @@ function buySelected(){
 function openCheckout(){
   $('m').classList.add('on');
   showModalStep('sLoad');
+  showEl('pixFallbackHint',false);
   fetch('/api/pix/create',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -345,16 +388,42 @@ function openCheckout(){
   });
 }
 
+/* Polling: só libera quando o backend retornar status === 'paid'.
+   Sem fallback por tempo. Se o backend cair, o lead pode recarregar
+   depois e o status volta a ser consultado (se a transação ainda existir). */
 function startPolling(){
   if(pollTimer) clearInterval(pollTimer);
-  var tentativas=0,maxTentativas=180;
+  var tentativas=0,maxTentativas=60; // ~5 min
   pollTimer=setInterval(function(){
     tentativas++;
-    if(tentativas>maxTentativas){clearInterval(pollTimer);return;}
+    if(tentativas>maxTentativas){
+      clearInterval(pollTimer);
+      showEl('pixFallbackHint',true);
+      var hint=$('pixFallbackHint');
+      if(hint) hint.textContent='Ainda não identificamos o pagamento. Se você já pagou, aguarde alguns instantes e recarregue a página.';
+      return;
+    }
     fetch('/api/pix/status/'+transacaoId).then(function(r){return r.json();}).then(function(data){
-      if(data.status==='paid'){clearInterval(pollTimer);paid();}
+      if(data && data.status==='paid'){
+        clearInterval(pollTimer);
+        verifyAndUnlock();
+      }
     }).catch(function(){});
   },5000);
+}
+
+/* Confirmação final no backend antes de liberar. Nunca libera sem paid. */
+function verifyAndUnlock(){
+  if(!transacaoId) return;
+  fetch('/api/pix/status/'+transacaoId).then(function(r){return r.json();}).then(function(data){
+    if(data && data.status==='paid'){
+      paid();
+    } else {
+      toast('Pagamento ainda não confirmado. Aguarde e tente novamente.', 4000);
+    }
+  }).catch(function(){
+    toast('Não foi possível confirmar o pagamento agora. Recarregue a página em instantes.', 5000);
+  });
 }
 
 function copiarPix(){
@@ -386,14 +455,31 @@ function paid(){
   showModalStep('sOk');
   setTimeout(function(){
     $('m').classList.remove('on');
-    $('salesPage').classList.add('hide');
-    $('membersPage').classList.remove('hide');
-    var packKey=cur?(cur.downsell?(cur.downsellLevel===1?'vip':'basico'):cur.key):'vip';
-    openMembers(packKey);
-    window.scrollTo(0,0);
+    var packKey, nome, days;
+    if(cur && cur.downsell){
+      if(cur.downsellLevel===1){ packKey='vip'; nome='Acesso Promocional 30 Dias'; days=30; }
+      else { packKey='basico'; nome='Acesso Simbólico 3 Dias'; days=3; }
+    } else if(cur){
+      packKey=cur.key;
+      nome=cur.nome;
+      days=(packKey==='basico')?3:30;
+    } else {
+      packKey='vip'; nome='Acesso 30 Dias'; days=30;
+    }
+    saveAccess(packKey,nome,days);
+    unlockContent(packKey,nome);
   },1500);
 }
 
+/* ====== LIBERAÇÃO CENTRALIZADA ====== */
+function unlockContent(packKey,nome){
+  $('salesPage').classList.add('hide');
+  $('membersPage').classList.remove('hide');
+  openMembers(packKey,nome);
+  window.scrollTo(0,0);
+}
+
+/* ====== INATIVIDADE ====== */
 var inactivityTimer=null;
 var INACTIVITY_MS=30000;
 function resetInactivityTimer(){
@@ -498,12 +584,14 @@ function closeDownsell(skipReset){
   if(!skipReset) resetInactivityTimer();
 }
 
-function openMembers(packKey){
+/* ====== ÁREA DE MEMBROS ====== */
+function openMembers(packKey,nomeOverride){
   var root=$('membersPage');
   var pack=PACKS[packKey]||PACKS['vip'];
+  var nomeMostrar=nomeOverride||pack.nome;
   var h='<div class="head" style="padding-bottom:10px;">'
     +'<h1 style="font-size:1.8rem;">SEU <span>ACESSO VIP</span></h1>'
-    +'<p style="color:var(--ok);font-weight:bold;margin-top:5px;">✅ '+(cur&&cur.downsell?cur.nome:pack.nome)+' liberado!</p>'
+    +'<p style="color:var(--ok);font-weight:bold;margin-top:5px;">✅ '+nomeMostrar+' liberado!</p>'
     +'</div>';
   if(packKey==='vitalicio'){
     h+='<div class="cta-container" style="padding-top:0;padding-bottom:20px;">'
@@ -530,19 +618,47 @@ function openMembers(packKey){
     });
   });
   h+='</div>';
+  h+='<div class="logout-bar"><button class="logout-btn" onclick="logout()">Sair / trocar acesso</button></div>';
+  h+='<div class="foot">Conteúdo destinado exclusivamente a maiores de 18 anos.</div>';
   root.innerHTML=h;
   forcePlay();
 }
 
-renderPlans();
-renderCarousel();
-renderTeasers();
-startTimerTop();
-forcePlay();
-selectPlan('vip');
-resetInactivityTimer();
+function logout(){
+  clearAccess();
+  $('membersPage').classList.add('hide');
+  $('membersPage').innerHTML='';
+  $('salesPage').classList.remove('hide');
+  window.scrollTo(0,0);
+  resetInactivityTimer();
+  toast('Acesso removido deste dispositivo.');
+}
+
+/* ====== BOOT ====== */
+function boot(){
+  renderPlans();
+  renderCarousel();
+  renderTeasers();
+  startTimerTop();
+  forcePlay();
+  selectPlan('vip');
+  var access=readAccess();
+  if(access){
+    $('salesPage').classList.add('hide');
+    $('membersPage').classList.remove('hide');
+    openMembers(access.pack, access.nome);
+    return;
+  }
+  resetInactivityTimer();
+}
+
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
 </script>
 
 </body>
 </html>
-    
+
